@@ -1,6 +1,8 @@
 <Solution>
   <Project Path="InvoiceProcessor.Api/InvoiceProcessor.Api.csproj" />
   <Project Path="InvoiceProcessor.Application/InvoiceProcessor.Application.csproj" />
+  <Project Path="InvoiceProcessor.Contracts/InvoiceProcessor.Contracts.csproj" Id="08c700a2-033f-4445-a263-a3deaccfeed7" />
   <Project Path="InvoiceProcessor.Domain/InvoiceProcessor.Domain.csproj" />
   <Project Path="InvoiceProcessor.Infrastructure/InvoiceProcessor.Infrastructure.csproj" />
+  <Project Path="InvoiceProcessorFunctions/InvoiceProcessorFunctions.csproj" Id="93ee9740-b3c2-463a-809e-1c39249ffb24" />
 </Solution>

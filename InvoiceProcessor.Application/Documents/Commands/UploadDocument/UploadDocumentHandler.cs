@@ -1,12 +1,9 @@
-﻿using InvoiceProcessor.Application.Events;
-using InvoiceProcessor.Application.Interfaces;
+﻿using InvoiceProcessor.Application.Interfaces;
 using InvoiceProcessor.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using InvoiceProcessor.Contracts.Events;
 
 namespace InvoiceProcessor.Application.Documents.Commands.UploadDocument
 {

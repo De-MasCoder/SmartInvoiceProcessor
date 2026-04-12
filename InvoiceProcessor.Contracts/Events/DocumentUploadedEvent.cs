@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace InvoiceProcessor.Application.Events
+namespace InvoiceProcessor.Contracts.Events
 {
     public class DocumentUploadedEvent
     {

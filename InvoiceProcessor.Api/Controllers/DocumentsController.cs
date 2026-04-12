@@ -27,7 +27,7 @@ namespace InvoiceProcessor.Api.Controllers
 
             var command = new UploadDocumentCommand
             {
-                FileStream = stream,
+                FileStream = null,
                 FileName = file.FileName
             };
 

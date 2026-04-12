@@ -1,6 +1,9 @@
+using FluentValidation;
+using InvoiceProcessor.Api.Behaviours;
 using InvoiceProcessor.Api.Middleware;
 using InvoiceProcessor.Application.Documents.Commands.UploadDocument;
 using InvoiceProcessor.Infrastructure;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,12 @@ builder.Services.AddSwaggerGen();
 // MediatR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(UploadDocumentCommand).Assembly));
+
+// FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(UploadDocumentCommand).Assembly);
+
+// Pipeline behaviour
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
 builder.Services.AddHttpContextAccessor();
 // Infrastructure

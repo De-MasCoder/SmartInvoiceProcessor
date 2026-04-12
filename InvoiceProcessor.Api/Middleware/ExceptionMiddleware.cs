@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using FluentValidation;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceProcessor.Api.Middleware
@@ -32,9 +33,10 @@ namespace InvoiceProcessor.Api.Middleware
         {
             var statusCode = exception switch
             {
-                ArgumentException => (int)HttpStatusCode.BadRequest,
-                KeyNotFoundException => (int)HttpStatusCode.NotFound,
-                _ => (int)HttpStatusCode.InternalServerError
+                ValidationException => StatusCodes.Status400BadRequest,
+                ArgumentException => StatusCodes.Status400BadRequest,
+                KeyNotFoundException => StatusCodes.Status404NotFound,
+                _ => StatusCodes.Status500InternalServerError
             };
 
             var problem = new ProblemDetails
@@ -45,6 +47,20 @@ namespace InvoiceProcessor.Api.Middleware
                 Instance = context.Request.Path,
                 Type = $"https://httpstatuses.com/{statusCode}"
             };
+
+            // Format validation exceptions niely
+            if (exception is ValidationException validationException)
+            {
+                problem.Title = "Validation failed";
+                problem.Status = StatusCodes.Status400BadRequest;
+
+                problem.Extensions["errors"] = validationException.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(e => e.ErrorMessage).ToArray()
+                    );
+            }
 
             problem.Extensions["traceId"] = context.TraceIdentifier;
 

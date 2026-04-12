@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using InvoiceProcessor.Domain.Enums;
 
 namespace InvoiceProcessorFunctions.Services
 {
@@ -33,6 +34,18 @@ namespace InvoiceProcessorFunctions.Services
             if (document == null)
             {
                 _logger.LogWarning("Document not found {DocumentId}", message.DocumentId);
+                return;
+            }
+
+            if (document.Status == DocumentStatus.Completed)
+            {
+                _logger.LogWarning("Already processed {DocumentId}", document.Id);
+                return;
+            }
+
+            if (document.Status == DocumentStatus.Processing)
+            {
+                _logger.LogWarning("Already processing {DocumentId}", document.Id);
                 return;
             }
 

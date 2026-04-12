@@ -1,3 +1,4 @@
+using InvoiceProcessor.Api.Middleware;
 using InvoiceProcessor.Application.Documents.Commands.UploadDocument;
 using InvoiceProcessor.Infrastructure;
 
@@ -19,7 +20,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
-
+app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

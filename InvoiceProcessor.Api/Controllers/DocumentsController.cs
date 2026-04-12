@@ -1,4 +1,5 @@
 ﻿
+using InvoiceProcessor.Application.Common;
 using InvoiceProcessor.Application.Documents.Commands.UploadDocument;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,8 @@ namespace InvoiceProcessor.Api.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload(IFormFile file)
+        [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Upload(IFormFile file, CancellationToken cancellationToken)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("Invalid file");
@@ -27,13 +29,14 @@ namespace InvoiceProcessor.Api.Controllers
 
             var command = new UploadDocumentCommand
             {
-                FileStream = null,
+                FileStream = stream,
                 FileName = file.FileName
             };
 
-            var documentId = await _mediator.Send(command);
+            var documentId = await _mediator.Send(command, cancellationToken);
+            var correlationId = HttpContext.TraceIdentifier;
 
-            return Ok(new { DocumentId = documentId });
+            return Ok(ApiResponse<Guid>.Ok(documentId, correlationId));
         }
     }
 }

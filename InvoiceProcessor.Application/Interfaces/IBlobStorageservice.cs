@@ -6,6 +6,6 @@ namespace InvoiceProcessor.Application.Interfaces
 {
     public interface IBlobStorageService
     {
-        Task<string> UploadAsync(Stream file, string fileName);
+        Task<string> UploadAsync(Stream file, string fileName, CancellationToken cancellationToken);
     }
 }

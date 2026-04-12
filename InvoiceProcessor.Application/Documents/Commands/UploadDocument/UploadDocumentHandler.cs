@@ -45,14 +45,15 @@ namespace InvoiceProcessor.Application.Documents.Commands.UploadDocument
             // Upload to blob
             var blobName = await _blobService.UploadAsync(
                 request.FileStream,
-                request.FileName);
+                request.FileName,
+                cancellationToken);
 
             // Create domain entity
             var document = new Document(request.FileName, blobName);
 
             // Save to DB
-            await _documentRepository.AddAsync(document);
-            await _documentRepository.SaveChangesAsync();
+            await _documentRepository.AddAsync(document,cancellationToken);
+            await _documentRepository.SaveChangesAsync(cancellationToken);
 
             // Publish event
             var message = new DocumentUploadedEvent

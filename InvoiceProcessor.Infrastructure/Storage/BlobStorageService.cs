@@ -15,12 +15,12 @@ namespace InvoiceProcessor.Infrastructure.Storage
             _container.CreateIfNotExists();
         }
 
-        public async Task<string> UploadAsync(Stream file, string fileName)
+        public async Task<string> UploadAsync(Stream file, string fileName, CancellationToken cancellationToken)
         {
             var blobName = $"{Guid.NewGuid()}-{fileName}";
             var blobClient = _container.GetBlobClient(blobName);
 
-            await blobClient.UploadAsync(file, overwrite: true);
+            await blobClient.UploadAsync(file, overwrite: true, cancellationToken: cancellationToken);
 
             return blobName;
         }

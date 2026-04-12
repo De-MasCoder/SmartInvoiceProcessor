@@ -7,8 +7,8 @@ namespace InvoiceProcessor.Application.Interfaces
 {
     public interface IDocumentRepository
     {
-        Task AddAsync(Document document);
-        Task<Document?> GetByIdAsync(Guid id);
-        Task SaveChangesAsync();
+        Task AddAsync(Document document, CancellationToken cancellationToken);
+        Task<Document?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

@@ -17,12 +17,12 @@ namespace InvoiceProcessor.Infrastructure.Messaging
             _sender = client.CreateSender(queueName);
         }
 
-        public async Task SendMessageAsync<T>(T message)
+        public async Task SendMessageAsync<T>(T message, CancellationToken cancellationToken)
         {
             var json = JsonSerializer.Serialize(message);
             var serviceBusMessage = new ServiceBusMessage(json);
 
-            await _sender.SendMessageAsync(serviceBusMessage);
+            await _sender.SendMessageAsync(serviceBusMessage, cancellationToken);
         }
     }
 }

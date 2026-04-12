@@ -6,6 +6,6 @@ namespace InvoiceProcessor.Application.Interfaces
 {
     public interface IQueueService
     {
-        Task SendMessageAsync<T>(T message);
+        Task SendMessageAsync<T>(T message, CancellationToken cancellationToken);
     }
 }

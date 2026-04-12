@@ -14,19 +14,19 @@ namespace InvoiceProcessor.Infrastructure.Persistence
             _context = context;
         }
 
-        public async Task AddAsync(Document document)
+        public async Task AddAsync(Document document, CancellationToken cancellationToken)
         {
-            await _context.Documents.AddAsync(document);
+            await _context.Documents.AddAsync(document,cancellationToken);
         }
 
-        public async Task<Document?> GetByIdAsync(Guid id)
+        public async Task<Document?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Documents.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Documents.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

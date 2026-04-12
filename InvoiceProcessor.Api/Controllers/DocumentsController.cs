@@ -1,4 +1,5 @@
 ﻿
+using InvoiceProcessor.Api.Services;
 using InvoiceProcessor.Application.Common;
 using InvoiceProcessor.Application.Documents.Commands.UploadDocument;
 using MediatR;
@@ -12,18 +13,22 @@ namespace InvoiceProcessor.Api.Controllers
     public class DocumentsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IFileValidator _fileValidator;
 
-        public DocumentsController(IMediator mediator)
+        public DocumentsController(
+            IMediator mediator,
+            IFileValidator fileValidator
+            )
         {
             _mediator = mediator;
+            _fileValidator = fileValidator;
         }
 
         [HttpPost("upload")]
         [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Upload(IFormFile file, CancellationToken cancellationToken)
         {
-            if (file == null || file.Length == 0)
-                return BadRequest("Invalid file");
+            _fileValidator.Validate(file);
 
             using var stream = file.OpenReadStream();
 

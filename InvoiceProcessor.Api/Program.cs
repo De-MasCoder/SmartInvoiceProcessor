@@ -1,6 +1,7 @@
 using FluentValidation;
 using InvoiceProcessor.Api.Behaviours;
 using InvoiceProcessor.Api.Middleware;
+using InvoiceProcessor.Api.Services;
 using InvoiceProcessor.Application.Documents.Commands.UploadDocument;
 using InvoiceProcessor.Infrastructure;
 using MediatR;
@@ -28,6 +29,8 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 builder.Services.AddHttpContextAccessor();
 // Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddScoped<IFileValidator, FileValidator>();
 
 var app = builder.Build();
 

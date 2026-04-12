@@ -63,7 +63,7 @@ namespace InvoiceProcessor.Application.Documents.Commands.UploadDocument
                 CorrelationId = correlationId ?? string.Empty
             };
 
-            await _queueService.SendMessageAsync(message);
+            await _queueService.SendMessageAsync(message, cancellationToken);
 
             return document.Id;
         }

@@ -8,5 +8,6 @@ namespace InvoiceProcessor.Application.Events
     {
         public Guid DocumentId { get; set; }
         public string BlobName { get; set; } = default!;
+        public string CorrelationId { get; set; } = default!;
     }
 }

@@ -1,12 +1,14 @@
 ﻿using Azure.Storage.Blobs;
 using InvoiceProcessor.Contracts.Events;
+using InvoiceProcessor.Domain.Enums;
 using InvoiceProcessor.Infrastructure.Persistence;
-using Microsoft.Extensions.Logging;
+using InvoiceProcessorFunctions.Services.OpenAi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using InvoiceProcessor.Domain.Enums;
+using System.Text.Json;
 
 namespace InvoiceProcessorFunctions.Services
 {
@@ -15,15 +17,18 @@ namespace InvoiceProcessorFunctions.Services
         private readonly BlobContainerClient _container;
         private readonly AppDbContext _db;
         private readonly ILogger<InvoiceProcessorService> _logger;
+        private readonly IOpenAiService _openAiService;
 
         public InvoiceProcessorService(
             BlobContainerClient container,
             AppDbContext db,
-            ILogger<InvoiceProcessorService> logger)
+            ILogger<InvoiceProcessorService> logger,
+            IOpenAiService openAiService)
         {
             _container = container;
             _db = db;
             _logger = logger;
+            _openAiService = openAiService;
         }
 
         public async Task ProcessAsync(DocumentUploadedEvent message)
@@ -57,11 +62,21 @@ namespace InvoiceProcessorFunctions.Services
                 var blobClient = _container.GetBlobClient(message.BlobName);
 
                 var stream = await blobClient.OpenReadAsync();
+                var content = await new StreamReader(stream).ReadToEndAsync();
 
-                //  Simulate extraction - Todo : Use AI later
-                var extractedData = $"Processed at {DateTime.UtcNow}";
+                var invoiceData = await _openAiService.ExtractAsync(content);
 
-                document.MarkAsCompleted(extractedData);
+                if (invoiceData == null)
+                {
+                    _logger.LogWarning("Failed to parse invoice data for {DocumentId}", document.Id);
+                    document.MarkAsFailed();
+                    await _db.SaveChangesAsync();
+                    return;
+                }
+
+                var extractedJson = JsonSerializer.Serialize(invoiceData);
+
+                document.MarkAsCompleted(extractedJson);
 
                 await _db.SaveChangesAsync();
 

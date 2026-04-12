@@ -1,5 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 using InvoiceProcessor.Application.Interfaces;
+using InvoiceProcessor.Infrastructure.Resilience;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,7 +23,12 @@ namespace InvoiceProcessor.Infrastructure.Messaging
             var json = JsonSerializer.Serialize(message);
             var serviceBusMessage = new ServiceBusMessage(json);
 
-            await _sender.SendMessageAsync(serviceBusMessage, cancellationToken);
+           var retryPolicy = RetryPolicies.GetRetryPolicy();
+
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                await _sender.SendMessageAsync(serviceBusMessage, cancellationToken);
+            });
         }
     }
 }

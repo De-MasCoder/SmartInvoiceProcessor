@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using InvoiceProcessor.Application.Interfaces;
+using InvoiceProcessor.Infrastructure.Resilience;
 
 namespace InvoiceProcessor.Infrastructure.Storage
 {
@@ -20,7 +21,12 @@ namespace InvoiceProcessor.Infrastructure.Storage
             var blobName = $"{Guid.NewGuid()}-{fileName}";
             var blobClient = _container.GetBlobClient(blobName);
 
-            await blobClient.UploadAsync(file, overwrite: true, cancellationToken: cancellationToken);
+            var retryPolicy = RetryPolicies.GetRetryPolicy();
+
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                await blobClient.UploadAsync(file, overwrite: true, cancellationToken);
+            });
 
             return blobName;
         }

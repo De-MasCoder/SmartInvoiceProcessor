@@ -3,6 +3,7 @@ using InvoiceProcessor.Api.Services;
 using InvoiceProcessor.Application.Common;
 using InvoiceProcessor.Application.Documents.Commands.UploadDocument;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceProcessor.Api.Controllers
@@ -25,6 +26,7 @@ namespace InvoiceProcessor.Api.Controllers
             _fileValidator = fileValidator;
         }
 
+        [Authorize]
         [HttpPost("upload")]
         [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Upload(IFormFile file, CancellationToken cancellationToken)
